@@ -47,7 +47,8 @@ function App() {
   // Setup global audio element
   useEffect(() => {
     const audio = new Audio();
-    audio.preload = "metadata";
+    audio.preload = "auto"; // Changed from metadata to auto for faster loading
+    audio.crossOrigin = "anonymous"; // Help with CORS
 
     // Audio event listeners
     audio.addEventListener("timeupdate", () => {
@@ -56,6 +57,18 @@ function App() {
 
     audio.addEventListener("loadedmetadata", () => {
       setDuration(audio.duration);
+    });
+
+    audio.addEventListener("canplay", () => {
+      console.log("Audio ready to play");
+    });
+
+    audio.addEventListener("waiting", () => {
+      console.log("Audio buffering...");
+    });
+
+    audio.addEventListener("error", (e) => {
+      console.error("Audio error:", audio.error?.message || "Unknown error");
     });
 
     audio.addEventListener("ended", onTrackEnd);
