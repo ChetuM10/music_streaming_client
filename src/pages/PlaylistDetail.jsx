@@ -11,7 +11,7 @@ import {
   Shuffle,
 } from "lucide-react";
 import Button from "../components/common/Button";
-import { Loader } from "../components/common/Loader";
+import Loader from "../components/common/Loader";
 import { EmptyPlaylist } from "../components/common/EmptyState";
 import usePlayerStore from "../store/playerStore";
 import api from "../lib/api";

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Play, Pause, Clock, Heart, Shuffle } from "lucide-react";
 import Button from "../components/common/Button";
-import { Loader, SkeletonCard } from "../components/common/Loader";
+import Loader from "../components/common/Loader";
 import { EmptyFavorites } from "../components/common/EmptyState";
 import usePlayerStore from "../store/playerStore";
 import api from "../lib/api";

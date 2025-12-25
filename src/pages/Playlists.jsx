@@ -4,7 +4,7 @@ import { Plus, Music2, X, Loader2 } from "lucide-react";
 import Button from "../components/common/Button";
 import Input from "../components/common/Input";
 import { EmptyPlaylist } from "../components/common/EmptyState";
-import { Loader, SkeletonCard } from "../components/common/Loader";
+import Loader, { SkeletonCard } from "../components/common/Loader";
 import api from "../lib/api";
 
 const Playlists = () => {
