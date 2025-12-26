@@ -29,8 +29,14 @@ const usePlayerStore = create((set, get) => ({
   setAudioRef: (ref) => set({ audioRef: ref }),
 
   // Play a track
-  play: (track, type = "track") => {
+  play: async (track, type = "track") => {
     const { audioRef } = get();
+
+    // Validate track has audio URL
+    if (!track?.audio_url) {
+      console.warn("Cannot play track without audio_url:", track?.title);
+      return;
+    }
 
     set({
       currentTrack: track,
@@ -40,28 +46,49 @@ const usePlayerStore = create((set, get) => ({
     });
 
     if (audioRef) {
-      audioRef.src = track.audio_url;
-      audioRef.play().catch(console.error);
+      try {
+        audioRef.pause(); // Stop any current playback first
+        audioRef.src = track.audio_url;
+        audioRef.load(); // Force reload
+        await audioRef.play();
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          console.error("Play error:", error);
+        }
+      }
     }
   },
 
   // Play a list of tracks (e.g., playlist, album)
-  playList: (tracks, startIndex = 0, type = "track") => {
-    const { isShuffled } = get();
+  playList: async (tracks, startIndex = 0, type = "track") => {
+    const { isShuffled, audioRef } = get();
 
-    let queue = [...tracks];
-    let index = startIndex;
+    // Filter out tracks without audio_url
+    const validTracks = tracks.filter((t) => t?.audio_url);
+    if (validTracks.length === 0) {
+      console.warn("No valid tracks with audio_url found");
+      return;
+    }
+
+    // Adjust startIndex if needed
+    let adjustedIndex = startIndex;
+    if (adjustedIndex >= validTracks.length) {
+      adjustedIndex = 0;
+    }
+
+    let queue = [...validTracks];
+    let index = adjustedIndex;
 
     if (isShuffled) {
       // Move current track to front, shuffle rest
-      const current = queue.splice(startIndex, 1)[0];
+      const current = queue.splice(index, 1)[0];
       queue = [current, ...shuffleArray(queue)];
       index = 0;
     }
 
     set({
       queue,
-      originalQueue: [...tracks],
+      originalQueue: [...validTracks],
       queueIndex: index,
       currentTrack: queue[index],
       currentType: type,
@@ -69,26 +96,39 @@ const usePlayerStore = create((set, get) => ({
       currentTime: 0,
     });
 
-    const { audioRef } = get();
-    if (audioRef) {
-      audioRef.src = queue[index].audio_url;
-      audioRef.play().catch(console.error);
+    if (audioRef && queue[index]?.audio_url) {
+      try {
+        audioRef.pause();
+        audioRef.src = queue[index].audio_url;
+        audioRef.load();
+        await audioRef.play();
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          console.error("PlayList error:", error);
+        }
+      }
     }
   },
 
   // Toggle play/pause
-  togglePlay: () => {
+  togglePlay: async () => {
     const { audioRef, isPlaying, currentTrack } = get();
 
-    if (!currentTrack) return;
+    if (!currentTrack || !currentTrack.audio_url) return;
 
     if (isPlaying) {
       audioRef?.pause();
+      set({ isPlaying: false });
     } else {
-      audioRef?.play().catch(console.error);
+      try {
+        await audioRef?.play();
+        set({ isPlaying: true });
+      } catch (error) {
+        if (error.name !== "AbortError") {
+          console.error("Toggle play error:", error);
+        }
+      }
     }
-
-    set({ isPlaying: !isPlaying });
   },
 
   // Pause

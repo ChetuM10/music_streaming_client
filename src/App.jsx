@@ -4,35 +4,46 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import useAuthStore from "./store/authStore";
 import usePlayerStore from "./store/playerStore";
 
-// Layout
+// Layout (always loaded)
 import Layout from "./components/layout/Layout";
+import Loader from "./components/common/Loader";
+import ErrorBoundary from "./components/common/ErrorBoundary";
 
-// Pages
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import Browse from "./pages/Browse";
-import Podcasts from "./pages/Podcasts";
-import PodcastDetail from "./pages/PodcastDetail";
-import Playlists from "./pages/Playlists";
-import PlaylistDetail from "./pages/PlaylistDetail";
-import Search from "./pages/Search";
-import Favorites from "./pages/Favorites";
-import RecentlyPlayed from "./pages/RecentlyPlayed";
+// Lazy-loaded pages for code splitting
+const Home = lazy(() => import("./pages/Home"));
+const Login = lazy(() => import("./pages/Login"));
+const Signup = lazy(() => import("./pages/Signup"));
+const Browse = lazy(() => import("./pages/Browse"));
+const Podcasts = lazy(() => import("./pages/Podcasts"));
+const PodcastDetail = lazy(() => import("./pages/PodcastDetail"));
+const Playlists = lazy(() => import("./pages/Playlists"));
+const PlaylistDetail = lazy(() => import("./pages/PlaylistDetail"));
+const Search = lazy(() => import("./pages/Search"));
+const Favorites = lazy(() => import("./pages/Favorites"));
+const RecentlyPlayed = lazy(() => import("./pages/RecentlyPlayed"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const ArtistDashboard = lazy(() => import("./pages/ArtistDashboard"));
+const Discover = lazy(() => import("./pages/Discover"));
 
-// Admin Pages
-import AdminDashboard from "./pages/admin/Dashboard";
-import UploadTrack from "./pages/admin/UploadTrack";
-import UploadPodcast from "./pages/admin/UploadPodcast";
+// Admin Pages (lazy-loaded)
+const AdminDashboard = lazy(() => import("./pages/admin/Dashboard"));
+const UploadTrack = lazy(() => import("./pages/admin/UploadTrack"));
+const UploadPodcast = lazy(() => import("./pages/admin/UploadPodcast"));
 
 // Components
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import AdminRoute from "./components/common/AdminRoute";
-import Loader from "./components/common/Loader";
+
+// Loading fallback for Suspense
+const PageLoader = () => (
+  <div className="flex items-center justify-center min-h-[400px]">
+    <Loader size="lg" />
+  </div>
+);
 
 function App() {
   const { initialize, isLoading, isAuthenticated } = useAuthStore();
@@ -68,7 +79,10 @@ function App() {
     });
 
     audio.addEventListener("error", (e) => {
-      console.error("Audio error:", audio.error?.message || "Unknown error");
+      // Only log error if audio actually has a source
+      if (audio.src && audio.src !== window.location.href) {
+        console.error("Audio error:", audio.error?.message || "Unknown error");
+      }
     });
 
     audio.addEventListener("ended", onTrackEnd);
@@ -92,44 +106,60 @@ function App() {
   }
 
   return (
-    <Router>
-      <Routes>
-        {/* Public routes */}
-        <Route
-          path="/login"
-          element={isAuthenticated ? <Navigate to="/" replace /> : <Login />}
-        />
-        <Route
-          path="/signup"
-          element={isAuthenticated ? <Navigate to="/" replace /> : <Signup />}
-        />
+    <ErrorBoundary>
+      <Router>
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            {/* Public routes */}
+            <Route
+              path="/login"
+              element={
+                isAuthenticated ? <Navigate to="/" replace /> : <Login />
+              }
+            />
+            <Route
+              path="/signup"
+              element={
+                isAuthenticated ? <Navigate to="/" replace /> : <Signup />
+              }
+            />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
 
-        {/* Protected routes with Layout */}
-        <Route element={<ProtectedRoute />}>
-          <Route element={<Layout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/browse" element={<Browse />} />
-            <Route path="/podcasts" element={<Podcasts />} />
-            <Route path="/podcasts/:id" element={<PodcastDetail />} />
-            <Route path="/playlists" element={<Playlists />} />
-            <Route path="/playlists/:id" element={<PlaylistDetail />} />
-            <Route path="/search" element={<Search />} />
-            <Route path="/favorites" element={<Favorites />} />
-            <Route path="/recently-played" element={<RecentlyPlayed />} />
+            {/* Protected routes with Layout */}
+            <Route element={<ProtectedRoute />}>
+              <Route element={<Layout />}>
+                <Route path="/" element={<Home />} />
+                <Route path="/browse" element={<Browse />} />
+                <Route path="/podcasts" element={<Podcasts />} />
+                <Route path="/podcasts/:id" element={<PodcastDetail />} />
+                <Route path="/playlists" element={<Playlists />} />
+                <Route path="/playlists/:id" element={<PlaylistDetail />} />
+                <Route path="/search" element={<Search />} />
+                <Route path="/favorites" element={<Favorites />} />
+                <Route path="/recently-played" element={<RecentlyPlayed />} />
+                <Route path="/discover" element={<Discover />} />
 
-            {/* Admin routes */}
-            <Route element={<AdminRoute />}>
-              <Route path="/admin" element={<AdminDashboard />} />
-              <Route path="/admin/upload/track" element={<UploadTrack />} />
-              <Route path="/admin/upload/podcast" element={<UploadPodcast />} />
+                {/* Artist routes */}
+                <Route path="/artist/dashboard" element={<ArtistDashboard />} />
+
+                {/* Admin routes */}
+                <Route element={<AdminRoute />}>
+                  <Route path="/admin" element={<AdminDashboard />} />
+                  <Route path="/admin/upload/track" element={<UploadTrack />} />
+                  <Route
+                    path="/admin/upload/podcast"
+                    element={<UploadPodcast />}
+                  />
+                </Route>
+              </Route>
             </Route>
-          </Route>
-        </Route>
 
-        {/* Catch all */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Router>
+            {/* Catch all */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
+      </Router>
+    </ErrorBoundary>
   );
 }
 
