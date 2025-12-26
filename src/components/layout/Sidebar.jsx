@@ -8,7 +8,6 @@ import {
   Music2,
   Podcast,
   Clock,
-  Settings,
   LogOut,
   User,
   LayoutDashboard,
@@ -45,17 +44,20 @@ const Sidebar = ({ className }) => {
   return (
     <aside
       className={cn(
-        "w-[var(--sidebar-width)] bg-black flex flex-col h-screen sticky top-0",
+        "w-[var(--sidebar-width)] bg-black/95 backdrop-blur-xl flex flex-col h-screen sticky top-0",
+        "border-r border-white/[0.05]",
         className
       )}
     >
       {/* Logo */}
       <div className="p-6">
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 bg-[var(--accent-primary)] rounded-lg flex items-center justify-center">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-gradient-to-br from-[var(--accent-primary)] to-[#1ed760] rounded-xl flex items-center justify-center shadow-lg shadow-[var(--accent-primary)]/20">
             <Music2 className="w-6 h-6 text-black" />
           </div>
-          <span className="text-xl font-bold">Melodify</span>
+          <span className="text-xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text">
+            Melodify
+          </span>
         </div>
       </div>
 
@@ -68,14 +70,24 @@ const Sidebar = ({ className }) => {
                 to={item.path}
                 className={({ isActive }) =>
                   cn(
-                    "flex items-center gap-4 px-4 py-3 rounded-lg transition-colors",
-                    "text-[var(--text-secondary)] hover:text-white",
-                    isActive && "bg-[var(--bg-tertiary)] text-white"
+                    "flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200",
+                    "text-[var(--text-secondary)] hover:text-white hover:bg-white/[0.06]",
+                    isActive &&
+                      "bg-gradient-to-r from-[var(--accent-primary)]/10 to-transparent text-white border-l-2 border-[var(--accent-primary)]"
                   )
                 }
               >
-                <item.icon className="w-5 h-5" />
-                <span className="font-medium">{item.label}</span>
+                {({ isActive }) => (
+                  <>
+                    <item.icon
+                      className={cn(
+                        "w-5 h-5 transition-colors",
+                        isActive && "text-[var(--accent-primary)]"
+                      )}
+                    />
+                    <span className="font-medium">{item.label}</span>
+                  </>
+                )}
               </NavLink>
             </li>
           ))}
@@ -83,13 +95,13 @@ const Sidebar = ({ className }) => {
       </nav>
 
       {/* Library Section */}
-      <div className="mt-6 px-3 flex-1">
-        <div className="flex items-center justify-between px-4 mb-2">
+      <div className="mt-8 px-3 flex-1">
+        <div className="flex items-center justify-between px-4 mb-3">
           <span className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
             Your Library
           </span>
-          <button className="text-[var(--text-muted)] hover:text-white transition-colors">
-            <PlusSquare className="w-5 h-5" />
+          <button className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-white hover:bg-white/[0.06] transition-all">
+            <PlusSquare className="w-4 h-4" />
           </button>
         </div>
 
@@ -100,14 +112,24 @@ const Sidebar = ({ className }) => {
                 to={item.path}
                 className={({ isActive }) =>
                   cn(
-                    "flex items-center gap-4 px-4 py-3 rounded-lg transition-colors",
-                    "text-[var(--text-secondary)] hover:text-white",
-                    isActive && "bg-[var(--bg-tertiary)] text-white"
+                    "flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200",
+                    "text-[var(--text-secondary)] hover:text-white hover:bg-white/[0.06]",
+                    isActive &&
+                      "bg-gradient-to-r from-[var(--accent-primary)]/10 to-transparent text-white border-l-2 border-[var(--accent-primary)]"
                   )
                 }
               >
-                <item.icon className="w-5 h-5" />
-                <span className="font-medium">{item.label}</span>
+                {({ isActive }) => (
+                  <>
+                    <item.icon
+                      className={cn(
+                        "w-5 h-5 transition-colors",
+                        isActive && "text-[var(--accent-primary)]"
+                      )}
+                    />
+                    <span className="font-medium">{item.label}</span>
+                  </>
+                )}
               </NavLink>
             </li>
           ))}
@@ -115,8 +137,8 @@ const Sidebar = ({ className }) => {
 
         {/* Admin Section */}
         {adminItems.length > 0 && (
-          <div className="mt-6">
-            <div className="px-4 mb-2">
+          <div className="mt-8">
+            <div className="px-4 mb-3">
               <span className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
                 Admin
               </span>
@@ -128,14 +150,24 @@ const Sidebar = ({ className }) => {
                     to={item.path}
                     className={({ isActive }) =>
                       cn(
-                        "flex items-center gap-4 px-4 py-3 rounded-lg transition-colors",
-                        "text-[var(--text-secondary)] hover:text-white",
-                        isActive && "bg-[var(--bg-tertiary)] text-white"
+                        "flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200",
+                        "text-[var(--text-secondary)] hover:text-white hover:bg-white/[0.06]",
+                        isActive &&
+                          "bg-gradient-to-r from-purple-500/10 to-transparent text-white border-l-2 border-purple-500"
                       )
                     }
                   >
-                    <item.icon className="w-5 h-5" />
-                    <span className="font-medium">{item.label}</span>
+                    {({ isActive }) => (
+                      <>
+                        <item.icon
+                          className={cn(
+                            "w-5 h-5 transition-colors",
+                            isActive && "text-purple-400"
+                          )}
+                        />
+                        <span className="font-medium">{item.label}</span>
+                      </>
+                    )}
                   </NavLink>
                 </li>
               ))}
@@ -145,9 +177,9 @@ const Sidebar = ({ className }) => {
       </div>
 
       {/* User Profile & Logout */}
-      <div className="p-3 border-t border-[var(--border-light)]">
-        <div className="flex items-center gap-3 px-4 py-3">
-          <div className="w-8 h-8 rounded-full bg-[var(--bg-tertiary)] flex items-center justify-center overflow-hidden">
+      <div className="p-3 border-t border-white/[0.05]">
+        <div className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/[0.04] transition-colors cursor-pointer group">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--accent-primary)] to-[#1ed760] flex items-center justify-center overflow-hidden ring-2 ring-white/10">
             {profile?.avatar_url ? (
               <img
                 src={profile.avatar_url}
@@ -155,17 +187,18 @@ const Sidebar = ({ className }) => {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <User className="w-4 h-4 text-[var(--text-muted)]" />
+              <User className="w-5 h-5 text-black" />
             )}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate">
+            <p className="text-sm font-semibold truncate group-hover:text-white transition-colors">
               {profile?.username || "User"}
             </p>
+            <p className="text-xs text-[var(--text-muted)]">Free account</p>
           </div>
           <button
             onClick={handleLogout}
-            className="text-[var(--text-muted)] hover:text-white transition-colors"
+            className="p-2 rounded-lg text-[var(--text-muted)] hover:text-red-400 hover:bg-red-500/10 transition-all"
             title="Logout"
           >
             <LogOut className="w-5 h-5" />

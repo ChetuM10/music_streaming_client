@@ -57,6 +57,72 @@ export const truncate = (text, maxLength = 50) => {
 };
 
 /**
+ * Premium gradient palettes for cover generation
+ */
+const GRADIENT_PALETTES = [
+  // Purple/Pink vibes
+  { start: "#667eea", end: "#764ba2" },
+  { start: "#f093fb", end: "#f5576c" },
+  { start: "#4facfe", end: "#00f2fe" },
+  // Nature tones
+  { start: "#11998e", end: "#38ef7d" },
+  { start: "#36d1dc", end: "#5b86e5" },
+  { start: "#ed6ea0", end: "#ec8c69" },
+  // Deep tones
+  { start: "#8e2de2", end: "#4a00e0" },
+  { start: "#fc466b", end: "#3f5efb" },
+  { start: "#00c6ff", end: "#0072ff" },
+  // Warm tones
+  { start: "#f7971e", end: "#ffd200" },
+  { start: "#ff416c", end: "#ff4b2b" },
+  { start: "#654ea3", end: "#eaafc8" },
+];
+
+/**
+ * Get a consistent gradient based on text (same text = same gradient)
+ */
+export const getGradientForText = (text = "Music") => {
+  // Generate a hash from the text
+  let hash = 0;
+  for (let i = 0; i < text.length; i++) {
+    const char = text.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash = hash & hash;
+  }
+  const index = Math.abs(hash) % GRADIENT_PALETTES.length;
+  return GRADIENT_PALETTES[index];
+};
+
+/**
+ * Get placeholder cover - returns a data object for component use
+ * Instead of an image URL, we return gradient info
+ */
+export const getPlaceholderCover = (text = "Music") => {
+  // Return null so components use the gradient fallback
+  return null;
+};
+
+/**
+ * Get gradient style for placeholder
+ */
+export const getPlaceholderGradient = (text = "Music") => {
+  const palette = getGradientForText(text);
+  return `linear-gradient(135deg, ${palette.start} 0%, ${palette.end} 100%)`;
+};
+
+/**
+ * Get initials from text (max 2 characters)
+ */
+export const getInitials = (text = "") => {
+  if (!text) return "♪";
+  const words = text.split(" ").filter(Boolean);
+  if (words.length >= 2) {
+    return (words[0][0] + words[1][0]).toUpperCase();
+  }
+  return text.substring(0, 2).toUpperCase();
+};
+
+/**
  * Generate a random color for placeholder covers
  */
 export const getRandomGradient = () => {
@@ -96,14 +162,6 @@ export const shuffleArray = (array) => {
     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
   return shuffled;
-};
-
-/**
- * Get placeholder cover URL
- */
-export const getPlaceholderCover = (text = "Music") => {
-  const initial = text.charAt(0).toUpperCase();
-  return `https://ui-avatars.com/api/?name=${initial}&background=1DB954&color=fff&size=200`;
 };
 
 /**

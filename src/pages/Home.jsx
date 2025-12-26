@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Play, ChevronRight } from "lucide-react";
+import { Play, ChevronRight, Sparkles, Music, Headphones } from "lucide-react";
 import useAuthStore from "../store/authStore";
 import usePlayerStore from "../store/playerStore";
 import api from "../lib/api";
 import TrackCard from "../components/music/TrackCard";
 import PodcastCard from "../components/podcast/PodcastCard";
-import Loader, { SkeletonCard } from "../components/common/Loader";
-import { cn } from "../lib/utils";
+import CoverImage from "../components/common/CoverImage";
+import { SkeletonCard } from "../components/common/Loader";
+import { cn, getPlaceholderGradient } from "../lib/utils";
 
 const Home = () => {
   const { profile } = useAuthStore();
-  const { playList } = usePlayerStore();
+  const { playList, currentTrack, isPlaying } = usePlayerStore();
 
   const [isLoading, setIsLoading] = useState(true);
   const [recentTracks, setRecentTracks] = useState([]);
@@ -23,15 +24,13 @@ const Home = () => {
       try {
         setIsLoading(true);
 
-        // Fetch tracks
-        const tracksRes = await api.get("/tracks?limit=8");
+        const tracksRes = await api.get("/tracks?limit=10");
         if (tracksRes.data.success) {
-          setRecentTracks(tracksRes.data.data.tracks.slice(0, 4));
+          setRecentTracks(tracksRes.data.data.tracks.slice(0, 6));
           setNewReleases(tracksRes.data.data.tracks);
         }
 
-        // Fetch podcasts
-        const podcastsRes = await api.get("/podcasts?limit=4");
+        const podcastsRes = await api.get("/podcasts?limit=5");
         if (podcastsRes.data.success) {
           setPodcasts(podcastsRes.data.data.podcasts);
         }
@@ -52,89 +51,142 @@ const Home = () => {
     return "Good evening";
   };
 
-  const handlePlayAll = () => {
-    if (newReleases.length > 0) {
-      playList(newReleases, 0);
-    }
-  };
-
   return (
-    <div className="min-h-full">
+    <div className="min-h-full pb-32">
       {/* Hero Section */}
-      <div
-        className="relative px-6 pt-8 pb-6 lg:px-8"
-        style={{
-          background:
-            "linear-gradient(to bottom, rgba(29, 185, 84, 0.3), var(--bg-primary))",
-        }}
-      >
-        <h1 className="text-3xl lg:text-4xl font-bold mb-6">
-          {getGreeting()}, {profile?.username || "there"}!
-        </h1>
+      <div className="relative overflow-hidden">
+        {/* Ambient Background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#1db954]/25 via-[#1db954]/5 to-transparent" />
+        <div className="absolute -top-48 -right-48 w-[500px] h-[500px] bg-purple-600/20 rounded-full blur-[120px]" />
+        <div className="absolute top-20 -left-32 w-[400px] h-[400px] bg-[#1db954]/15 rounded-full blur-[100px]" />
 
-        {/* Quick Play Grid */}
-        {isLoading ? (
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="skeleton h-16 rounded-lg" />
-            ))}
+        <div className="relative px-6 pt-10 pb-10 lg:px-8">
+          {/* Greeting */}
+          <div className="max-w-4xl">
+            <div className="flex items-center gap-4 mb-3">
+              <h1 className="text-4xl lg:text-6xl font-bold tracking-tight">
+                {getGreeting()}
+              </h1>
+              <Sparkles className="w-10 h-10 text-[var(--accent-primary)] animate-pulse" />
+            </div>
+            <p className="text-[var(--text-secondary)] text-xl mb-10">
+              Welcome back,{" "}
+              <span className="text-white font-semibold">
+                {profile?.username || "music lover"}
+              </span>
+            </p>
           </div>
-        ) : recentTracks.length > 0 ? (
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
-            {recentTracks.map((track) => (
-              <button
-                key={track.id}
-                onClick={() =>
-                  playList(recentTracks, recentTracks.indexOf(track))
-                }
-                className={cn(
-                  "flex items-center gap-4 bg-white/10 hover:bg-white/20",
-                  "rounded-lg overflow-hidden transition-colors group"
-                )}
-              >
-                <img
-                  src={
-                    track.cover_url ||
-                    `https://ui-avatars.com/api/?name=${track.title[0]}&background=1DB954&color=fff&size=64`
-                  }
-                  alt={track.title}
-                  className="w-16 h-16 object-cover"
-                />
-                <span className="font-semibold truncate pr-4">
-                  {track.title}
-                </span>
-                <div className="ml-auto mr-4 w-10 h-10 bg-[var(--accent-primary)] rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 shadow-lg transition-all">
-                  <Play className="w-5 h-5 text-black ml-0.5" fill="black" />
-                </div>
-              </button>
-            ))}
-          </div>
-        ) : null}
+
+          {/* Quick Play Grid - Premium Cards */}
+          {isLoading ? (
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="skeleton h-20 rounded-xl" />
+              ))}
+            </div>
+          ) : recentTracks.length > 0 ? (
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+              {recentTracks.map((track) => {
+                const isActive = currentTrack?.id === track.id;
+                return (
+                  <button
+                    key={track.id}
+                    onClick={() =>
+                      playList(recentTracks, recentTracks.indexOf(track))
+                    }
+                    className={cn(
+                      "flex items-center gap-4 rounded-xl overflow-hidden transition-all duration-300 group",
+                      "bg-white/[0.06] hover:bg-white/[0.12]",
+                      "border border-white/[0.06] hover:border-white/[0.12]",
+                      "hover:shadow-xl hover:shadow-black/30",
+                      "hover:scale-[1.02] active:scale-[0.99]",
+                      isActive &&
+                        "bg-white/[0.12] border-[var(--accent-primary)]/40"
+                    )}
+                  >
+                    <div className="relative w-20 h-20 flex-shrink-0">
+                      <CoverImage
+                        src={track.cover_url}
+                        title={track.title}
+                        alt={track.title}
+                        size="full"
+                        rounded="none"
+                        className="w-20 h-20"
+                      />
+                      {isActive && isPlaying && (
+                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                          <div className="flex items-end gap-0.5 h-5">
+                            <span className="w-1 bg-[var(--accent-primary)] rounded-full animate-music-bar-1" />
+                            <span className="w-1 bg-[var(--accent-primary)] rounded-full animate-music-bar-2" />
+                            <span className="w-1 bg-[var(--accent-primary)] rounded-full animate-music-bar-3" />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    <span
+                      className={cn(
+                        "font-semibold truncate pr-4 text-left flex-1 transition-colors",
+                        isActive
+                          ? "text-[var(--accent-primary)]"
+                          : "group-hover:text-white"
+                      )}
+                    >
+                      {track.title}
+                    </span>
+                    <div className="mr-4 w-12 h-12 bg-[var(--accent-primary)] rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 shadow-lg transition-all duration-300 transform group-hover:scale-105">
+                      <Play
+                        className="w-5 h-5 text-black ml-0.5"
+                        fill="black"
+                      />
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-white/5 mb-4">
+                <Music className="w-10 h-10 text-[var(--text-muted)]" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">No tracks yet</h3>
+              <p className="text-[var(--text-secondary)]">
+                Add some music to get started
+              </p>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Content Sections */}
-      <div className="px-6 lg:px-8 py-6 space-y-10">
+      <div className="px-6 lg:px-8 py-8 space-y-14">
         {/* New Releases */}
-        <section>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold">New Releases</h2>
+        <section className="animate-fade-in-up">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-2xl lg:text-3xl font-bold mb-1">
+                New Releases
+              </h2>
+              <p className="text-sm text-[var(--text-secondary)]">
+                Fresh tracks just for you
+              </p>
+            </div>
             <Link
               to="/browse"
-              className="flex items-center gap-1 text-sm text-[var(--text-secondary)] hover:text-white font-medium transition-colors"
+              className="flex items-center gap-1 px-4 py-2 rounded-full text-sm text-[var(--text-secondary)] hover:text-white hover:bg-white/5 font-medium transition-all"
             >
               Show all <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
 
           {isLoading ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
               {[...Array(5)].map((_, i) => (
                 <SkeletonCard key={i} />
               ))}
             </div>
-          ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-              {newReleases.map((track, index) => (
+          ) : newReleases.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+              {newReleases.slice(0, 10).map((track, index) => (
                 <TrackCard
                   key={track.id}
                   track={track}
@@ -142,29 +194,67 @@ const Home = () => {
                 />
               ))}
             </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-16 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
+              <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
+                <Music className="w-8 h-8 text-[var(--text-muted)]" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">
+                No tracks available
+              </h3>
+              <p className="text-sm text-[var(--text-secondary)]">
+                Check back soon for new music
+              </p>
+            </div>
           )}
         </section>
 
         {/* Podcasts */}
-        {podcasts.length > 0 && (
-          <section>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold">Popular Podcasts</h2>
-              <Link
-                to="/podcasts"
-                className="flex items-center gap-1 text-sm text-[var(--text-secondary)] hover:text-white font-medium transition-colors"
-              >
-                Show all <ChevronRight className="w-4 h-4" />
-              </Link>
+        <section
+          className="animate-fade-in-up"
+          style={{ animationDelay: "0.1s" }}
+        >
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-2xl lg:text-3xl font-bold mb-1">
+                Popular Podcasts
+              </h2>
+              <p className="text-sm text-[var(--text-secondary)]">
+                Discover amazing shows
+              </p>
             </div>
+            <Link
+              to="/podcasts"
+              className="flex items-center gap-1 px-4 py-2 rounded-full text-sm text-[var(--text-secondary)] hover:text-white hover:bg-white/5 font-medium transition-all"
+            >
+              Show all <ChevronRight className="w-4 h-4" />
+            </Link>
+          </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+          {isLoading ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+              {[...Array(5)].map((_, i) => (
+                <SkeletonCard key={i} />
+              ))}
+            </div>
+          ) : podcasts.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
               {podcasts.map((podcast) => (
                 <PodcastCard key={podcast.id} podcast={podcast} />
               ))}
             </div>
-          </section>
-        )}
+          ) : (
+            <div className="flex flex-col items-center justify-center py-16 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
+              <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
+                <Headphones className="w-8 h-8 text-[var(--text-muted)]" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">No podcasts yet</h3>
+              <p className="text-sm text-[var(--text-secondary)]">
+                Check back later for new shows
+              </p>
+            </div>
+          )}
+        </section>
       </div>
     </div>
   );
