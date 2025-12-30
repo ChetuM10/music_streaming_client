@@ -8,13 +8,20 @@ const Layout = () => {
   const { currentTrack } = usePlayerStore();
 
   return (
-    <div className="min-h-screen bg-[var(--bg-primary)] flex">
+    <div className="min-h-screen bg-[var(--bg-primary)] flex relative">
+      {/* Premium Noise Overlay */}
+      <div className="noise-overlay" />
+
+      {/* Ambient Background Orbs */}
+      <div className="ambient-orb ambient-orb-1" />
+      <div className="ambient-orb ambient-orb-2" />
+
       {/* Desktop Sidebar */}
       <Sidebar className="hidden lg:flex" />
 
       {/* Main Content */}
       <main
-        className="flex-1 overflow-y-auto"
+        className="flex-1 overflow-y-auto relative z-10"
         style={{
           paddingBottom: currentTrack
             ? "calc(var(--player-height) + 1rem)"

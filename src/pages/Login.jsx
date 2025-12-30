@@ -334,7 +334,7 @@ const Login = () => {
                     onBlur={() => setFocusedField(null)}
                     placeholder="name@example.com"
                     autoComplete="email"
-                    className="w-full pl-12 pr-4 py-3.5 bg-[#1a1a1a] border border-[#333] rounded-lg text-white placeholder:text-[#666] focus:outline-none focus:border-[#1db954] transition-all duration-200"
+                    className="w-full pl-16 pr-4 py-3.5 bg-[#1a1a1a] border border-[#333] rounded-lg text-white placeholder:text-[#888] focus:outline-none focus:border-[#1db954] transition-all duration-200"
                   />
                 </div>
                 {formErrors.email && (
@@ -372,7 +372,7 @@ const Login = () => {
                     onBlur={() => setFocusedField(null)}
                     placeholder="Enter your password"
                     autoComplete="current-password"
-                    className="w-full pl-12 pr-12 py-3.5 bg-[#1a1a1a] border border-[#333] rounded-lg text-white placeholder:text-[#666] focus:outline-none focus:border-[#1db954] transition-all duration-200"
+                    className="w-full pl-16 pr-12 py-3.5 bg-[#1a1a1a] border border-[#333] rounded-lg text-white placeholder:text-[#888] focus:outline-none focus:border-[#1db954] transition-all duration-200"
                   />
                   <button
                     type="button"

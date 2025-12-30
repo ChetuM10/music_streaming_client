@@ -21,9 +21,18 @@ const Favorites = () => {
   const fetchFavorites = async () => {
     try {
       const response = await api.get("/favorites");
-      setFavorites(response.data.data || []);
+      // Handle different response structures
+      const data = response.data.data;
+      if (Array.isArray(data)) {
+        setFavorites(data);
+      } else if (data?.favorites && Array.isArray(data.favorites)) {
+        setFavorites(data.favorites);
+      } else {
+        setFavorites([]);
+      }
     } catch (err) {
       console.error("Failed to fetch favorites:", err);
+      setFavorites([]);
     } finally {
       setLoading(false);
     }

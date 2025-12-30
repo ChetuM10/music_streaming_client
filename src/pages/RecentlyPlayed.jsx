@@ -20,9 +20,18 @@ const RecentlyPlayed = () => {
   const fetchHistory = async () => {
     try {
       const response = await api.get("/history");
-      setHistory(response.data.data || []);
+      // Handle different response structures
+      const data = response.data.data;
+      if (Array.isArray(data)) {
+        setHistory(data);
+      } else if (data?.history && Array.isArray(data.history)) {
+        setHistory(data.history);
+      } else {
+        setHistory([]);
+      }
     } catch (err) {
       console.error("Failed to fetch history:", err);
+      setHistory([]);
     } finally {
       setLoading(false);
     }

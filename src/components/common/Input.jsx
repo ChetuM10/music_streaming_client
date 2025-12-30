@@ -15,7 +15,7 @@ const Input = forwardRef(
         )}
         <div className="relative">
           {Icon && (
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)]">
               <Icon className="w-5 h-5" />
             </div>
           )}
@@ -26,7 +26,7 @@ const Input = forwardRef(
               "px-4 py-3 text-white placeholder:text-[var(--text-muted)]",
               "focus:outline-none focus:border-[var(--accent-primary)] focus:ring-1 focus:ring-[var(--accent-primary)]",
               "transition-all duration-200",
-              Icon && "pl-11",
+              Icon && "pl-16",
               error && "border-red-500 focus:border-red-500 focus:ring-red-500",
               className
             )}

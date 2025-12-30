@@ -25,9 +25,18 @@ const Playlists = () => {
   const fetchPlaylists = async () => {
     try {
       const response = await api.get("/playlists");
-      setPlaylists(response.data.data || []);
+      // Handle different response structures
+      const data = response.data.data;
+      if (Array.isArray(data)) {
+        setPlaylists(data);
+      } else if (data?.playlists && Array.isArray(data.playlists)) {
+        setPlaylists(data.playlists);
+      } else {
+        setPlaylists([]);
+      }
     } catch (err) {
       console.error("Failed to fetch playlists:", err);
+      setPlaylists([]);
     } finally {
       setLoading(false);
     }

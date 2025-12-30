@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Play, ChevronRight, Sparkles, Music, Headphones } from "lucide-react";
+import {
+  Play,
+  ChevronRight,
+  Sparkles,
+  Music,
+  Headphones,
+  Search,
+} from "lucide-react";
 import useAuthStore from "../store/authStore";
 import usePlayerStore from "../store/playerStore";
 import api from "../lib/api";
@@ -144,14 +151,24 @@ const Home = () => {
               })}
             </div>
           ) : (
-            <div className="text-center py-12">
-              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-white/5 mb-4">
-                <Music className="w-10 h-10 text-[var(--text-muted)]" />
+            <div className="empty-state-premium">
+              <div className="icon-container">
+                <Music className="w-10 h-10 text-[var(--accent-primary)]" />
               </div>
-              <h3 className="text-lg font-semibold mb-2">No tracks yet</h3>
-              <p className="text-[var(--text-secondary)]">
-                Add some music to get started
+              <h3 className="text-xl font-bold mb-2 text-white">
+                No tracks yet
+              </h3>
+              <p className="text-[var(--text-secondary)] mb-6 max-w-md mx-auto">
+                Start exploring to discover amazing music and build your
+                collection
               </p>
+              <Link
+                to="/browse"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--accent-primary)] hover:bg-[var(--accent-hover)] text-black font-semibold rounded-full transition-all hover:scale-105 hover:shadow-lg hover:shadow-[var(--accent-primary)]/30"
+              >
+                <Sparkles className="w-4 h-4" />
+                Start Exploring
+              </Link>
             </div>
           )}
         </div>
@@ -195,16 +212,23 @@ const Home = () => {
               ))}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-16 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
-              <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
-                <Music className="w-8 h-8 text-[var(--text-muted)]" />
+            <div className="empty-state-premium">
+              <div className="icon-container">
+                <Music className="w-10 h-10 text-[var(--accent-primary)]" />
               </div>
-              <h3 className="text-lg font-semibold mb-2">
+              <h3 className="text-xl font-bold mb-2 text-white">
                 No tracks available
               </h3>
-              <p className="text-sm text-[var(--text-secondary)]">
-                Check back soon for new music
+              <p className="text-[var(--text-secondary)] mb-6">
+                Fresh music is on the way! Check back soon for new releases.
               </p>
+              <Link
+                to="/search"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/15 text-white font-medium rounded-full transition-all hover:scale-105 border border-white/10"
+              >
+                <Search className="w-4 h-4" />
+                Search Music
+              </Link>
             </div>
           )}
         </section>
@@ -244,14 +268,29 @@ const Home = () => {
               ))}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-16 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
-              <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
-                <Headphones className="w-8 h-8 text-[var(--text-muted)]" />
+            <div className="empty-state-premium">
+              <div
+                className="icon-container"
+                style={{
+                  background:
+                    "linear-gradient(145deg, rgba(139, 92, 246, 0.15) 0%, rgba(139, 92, 246, 0.05) 100%)",
+                }}
+              >
+                <Headphones className="w-10 h-10 text-[var(--purple-accent)]" />
               </div>
-              <h3 className="text-lg font-semibold mb-2">No podcasts yet</h3>
-              <p className="text-sm text-[var(--text-secondary)]">
-                Check back later for new shows
+              <h3 className="text-xl font-bold mb-2 text-white">
+                No podcasts yet
+              </h3>
+              <p className="text-[var(--text-secondary)] mb-6">
+                Amazing shows are coming soon. Stay tuned for updates!
               </p>
+              <Link
+                to="/search"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--purple-accent)] hover:opacity-90 text-white font-semibold rounded-full transition-all hover:scale-105 hover:shadow-lg hover:shadow-[var(--purple-accent)]/30"
+              >
+                <Sparkles className="w-4 h-4" />
+                Discover More
+              </Link>
             </div>
           )}
         </section>
