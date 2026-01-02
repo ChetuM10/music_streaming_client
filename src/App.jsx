@@ -40,7 +40,7 @@ import AdminRoute from "./components/common/AdminRoute";
 
 // Loading fallback for Suspense
 const PageLoader = () => (
-  <div className="flex items-center justify-center min-h-[400px]">
+  <div>
     <Loader size="lg" />
   </div>
 );
@@ -58,10 +58,9 @@ function App() {
   // Setup global audio element
   useEffect(() => {
     const audio = new Audio();
-    audio.preload = "auto"; // Changed from metadata to auto for faster loading
-    audio.crossOrigin = "anonymous"; // Help with CORS
+    audio.preload = "auto";
+    audio.crossOrigin = "anonymous";
 
-    // Audio event listeners
     audio.addEventListener("timeupdate", () => {
       setCurrentTime(audio.currentTime);
     });
@@ -79,7 +78,6 @@ function App() {
     });
 
     audio.addEventListener("error", (e) => {
-      // Only log error if audio actually has a source
       if (audio.src && audio.src !== window.location.href) {
         console.error("Audio error:", audio.error?.message || "Unknown error");
       }
@@ -87,10 +85,8 @@ function App() {
 
     audio.addEventListener("ended", onTrackEnd);
 
-    // Set reference in store
     setAudioRef(audio);
 
-    // Cleanup
     return () => {
       audio.pause();
       audio.src = "";
@@ -99,7 +95,7 @@ function App() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[var(--bg-primary)] flex items-center justify-center">
+      <div>
         <Loader size="lg" />
       </div>
     );

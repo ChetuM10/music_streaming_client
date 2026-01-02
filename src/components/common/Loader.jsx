@@ -1,44 +1,27 @@
-import { cn } from "../../lib/utils";
+import { Loader2 } from "lucide-react";
 
-const Loader = ({ size = "md", className }) => {
+const Loader = ({ size = "md", className = "" }) => {
   const sizeClasses = {
-    sm: "w-4 h-4",
+    sm: "w-5 h-5",
     md: "w-8 h-8",
     lg: "w-12 h-12",
-    xl: "w-16 h-16",
   };
 
   return (
-    <div className={cn("flex items-center justify-center", className)}>
-      <div
-        className={cn(
-          "border-2 border-[var(--bg-tertiary)] border-t-[var(--accent-primary)] rounded-full animate-spin",
-          sizeClasses[size]
-        )}
-      />
+    <div className={`flex items-center justify-center ${className}`}>
+      <Loader2 className={`${sizeClasses[size]} text-teal-400 animate-spin`} />
     </div>
   );
 };
 
-// Skeleton loader for cards
-export const SkeletonCard = ({ className }) => (
-  <div className={cn("animate-pulse", className)}>
-    <div className="skeleton aspect-square rounded-lg mb-3" />
-    <div className="skeleton h-4 rounded w-3/4 mb-2" />
-    <div className="skeleton h-3 rounded w-1/2" />
-  </div>
-);
-
-// Skeleton loader for track list items
-export const SkeletonTrack = ({ className }) => (
-  <div className={cn("flex items-center gap-4 p-3 animate-pulse", className)}>
-    <div className="skeleton w-12 h-12 rounded" />
-    <div className="flex-1">
-      <div className="skeleton h-4 rounded w-1/3 mb-2" />
-      <div className="skeleton h-3 rounded w-1/4" />
+export const SkeletonCard = () => {
+  return (
+    <div className="glass-subtle p-4 rounded-xl animate-fade-in">
+      <div className="aspect-square skeleton rounded-lg mb-3" />
+      <div className="skeleton h-4 w-3/4 rounded mb-2" />
+      <div className="skeleton h-3 w-1/2 rounded" />
     </div>
-    <div className="skeleton h-3 rounded w-12" />
-  </div>
-);
+  );
+};
 
 export default Loader;

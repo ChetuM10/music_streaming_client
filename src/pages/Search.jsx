@@ -41,12 +41,10 @@ const Search = () => {
     }
   };
 
-  // Debounced search
   useEffect(() => {
     const debouncedSearch = debounce(performSearch, 300);
     debouncedSearch(query);
 
-    // Update URL params
     if (query) {
       setSearchParams({ q: query });
     } else {
@@ -57,8 +55,8 @@ const Search = () => {
   const hasResults = results.tracks.length > 0 || results.podcasts.length > 0;
 
   return (
-    <div className="p-6 lg:p-8">
-      <h1 className="text-3xl font-bold mb-6">Search</h1>
+    <div className="p-6 lg:p-8 animate-fade-in">
+      <h1 className="text-3xl font-bold text-moonlight mb-6">Search</h1>
 
       {/* Search Input */}
       <div className="max-w-xl mb-8">
@@ -85,8 +83,8 @@ const Search = () => {
         <div className="space-y-10">
           {/* Tracks */}
           {results.tracks.length > 0 && (
-            <section>
-              <h2 className="text-xl font-bold mb-4">Songs</h2>
+            <section className="animate-fade-in-up">
+              <h2 className="text-xl font-bold text-slate-100 mb-4">Songs</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                 {results.tracks.map((track, index) => (
                   <TrackCard
@@ -101,8 +99,10 @@ const Search = () => {
 
           {/* Podcasts */}
           {results.podcasts.length > 0 && (
-            <section>
-              <h2 className="text-xl font-bold mb-4">Podcasts</h2>
+            <section className="animate-fade-in-up">
+              <h2 className="text-xl font-bold text-slate-100 mb-4">
+                Podcasts
+              </h2>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                 {results.podcasts.map((podcast) => (
                   <PodcastCard key={podcast.id} podcast={podcast} />

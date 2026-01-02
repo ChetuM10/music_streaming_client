@@ -25,7 +25,6 @@ const Playlists = () => {
   const fetchPlaylists = async () => {
     try {
       const response = await api.get("/playlists");
-      // Handle different response structures
       const data = response.data.data;
       if (Array.isArray(data)) {
         setPlaylists(data);
@@ -77,9 +76,9 @@ const Playlists = () => {
 
   if (loading) {
     return (
-      <div className="p-6 lg:p-8">
+      <div className="p-6 lg:p-8 animate-fade-in">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold">Your Playlists</h1>
+          <h1 className="text-3xl font-bold text-moonlight">Your Playlists</h1>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
           {[...Array(6)].map((_, i) => (
@@ -91,9 +90,9 @@ const Playlists = () => {
   }
 
   return (
-    <div className="p-6 lg:p-8">
+    <div className="p-6 lg:p-8 animate-fade-in">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold">Your Playlists</h1>
+        <h1 className="text-3xl font-bold text-moonlight">Your Playlists</h1>
         <Button icon={Plus} onClick={() => setShowModal(true)}>
           Create Playlist
         </Button>
@@ -126,18 +125,20 @@ const Playlists = () => {
       {/* Create Playlist Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-          <div className="bg-[var(--bg-secondary)] rounded-xl p-6 w-full max-w-md mx-4 animate-scale-up">
+          <div className="glass p-6 w-full max-w-md mx-4 animate-scale-up">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold">Create Playlist</h2>
+              <h2 className="text-xl font-bold text-slate-100">
+                Create Playlist
+              </h2>
               <button
                 onClick={() => setShowModal(false)}
-                className="p-2 hover:bg-white/10 rounded-full transition-colors"
+                className="p-2 hover:bg-slate-800 rounded-full transition-colors"
               >
                 <X size={20} />
               </button>
             </div>
 
-            <form onSubmit={handleCreate}>
+            <form onSubmit={handleCreate} className="space-y-4">
               <Input
                 label="Playlist Name"
                 placeholder="My Awesome Playlist"
@@ -148,8 +149,8 @@ const Playlists = () => {
                 error={error}
               />
 
-              <div className="mt-4">
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              <div>
+                <label className="block text-sm font-medium text-slate-400 mb-2">
                   Description (optional)
                 </label>
                 <textarea
@@ -158,13 +159,11 @@ const Playlists = () => {
                   onChange={(e) =>
                     setFormData({ ...formData, description: e.target.value })
                   }
-                  className="w-full px-4 py-3 bg-[var(--bg-elevated)] border border-white/10 rounded-lg 
-                           text-white placeholder-gray-500 focus:outline-none focus:border-[var(--accent-primary)]
-                           resize-none h-24"
+                  className="input resize-none h-24"
                 />
               </div>
 
-              <div className="flex gap-3 mt-6">
+              <div className="flex gap-3 pt-2">
                 <Button
                   type="button"
                   variant="secondary"
@@ -176,7 +175,7 @@ const Playlists = () => {
                 <Button type="submit" className="flex-1" disabled={creating}>
                   {creating ? (
                     <>
-                      <Loader2 size={18} className="animate-spin mr-2" />
+                      <Loader2 size={18} className="animate-spin" />
                       Creating...
                     </>
                   ) : (
@@ -195,9 +194,9 @@ const Playlists = () => {
 // Playlist Card Component
 const PlaylistCard = ({ playlist, onDelete }) => {
   return (
-    <div className="group relative bg-[var(--bg-elevated)] rounded-lg p-4 hover:bg-[var(--bg-hover)] transition-all duration-300">
+    <div className="card card-interactive group">
       <Link to={`/playlists/${playlist.id}`}>
-        <div className="aspect-square rounded-lg overflow-hidden mb-3 bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center">
+        <div className="aspect-square rounded-lg overflow-hidden mb-3 bg-gradient-to-br from-purple-600 to-cyan-500 flex items-center justify-center">
           {playlist.cover_url ? (
             <img
               src={playlist.cover_url}
@@ -209,10 +208,10 @@ const PlaylistCard = ({ playlist, onDelete }) => {
           )}
         </div>
 
-        <h3 className="font-semibold truncate group-hover:text-[var(--accent-primary)] transition-colors">
+        <h3 className="font-semibold truncate text-slate-100 group-hover:text-teal-400 transition-colors">
           {playlist.name}
         </h3>
-        <p className="text-sm text-[var(--text-secondary)] truncate">
+        <p className="text-sm text-slate-400 truncate">
           {playlist.description || "Playlist"}
         </p>
       </Link>

@@ -21,7 +21,6 @@ const Favorites = () => {
   const fetchFavorites = async () => {
     try {
       const response = await api.get("/favorites");
-      // Handle different response structures
       const data = response.data.data;
       if (Array.isArray(data)) {
         setFavorites(data);
@@ -72,24 +71,19 @@ const Favorites = () => {
 
   if (loading) {
     return (
-      <div className="p-6 lg:p-8">
+      <div className="p-6 lg:p-8 animate-fade-in">
         <div className="flex items-center gap-6 mb-8">
-          <div className="w-48 h-48 rounded-lg bg-gradient-to-br from-purple-700 to-blue-400 flex items-center justify-center">
+          <div className="w-48 h-48 rounded-lg bg-gradient-to-br from-purple-600 to-pink-500 flex items-center justify-center glow-teal">
             <Heart size={64} className="text-white" fill="white" />
           </div>
           <div>
-            <p className="text-sm text-[var(--text-secondary)] uppercase">
-              Playlist
-            </p>
-            <h1 className="text-4xl font-bold">Liked Songs</h1>
+            <p className="text-sm text-slate-500 uppercase">Playlist</p>
+            <h1 className="text-4xl font-bold text-moonlight">Liked Songs</h1>
           </div>
         </div>
         <div className="space-y-2">
           {[...Array(5)].map((_, i) => (
-            <div
-              key={i}
-              className="h-16 bg-white/5 rounded animate-pulse"
-            ></div>
+            <div key={i} className="h-16 skeleton rounded-lg" />
           ))}
         </div>
       </div>
@@ -97,27 +91,27 @@ const Favorites = () => {
   }
 
   return (
-    <div className="pb-32">
+    <div className="pb-32 animate-fade-in">
       {/* Header */}
       <div className="relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-purple-900/50 to-[var(--bg-primary)]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-purple-900/30 to-transparent pointer-events-none" />
 
         <div className="relative p-6 lg:p-8">
           <div className="flex flex-col md:flex-row gap-6 items-start md:items-end">
             {/* Cover */}
-            <div className="w-48 h-48 lg:w-56 lg:h-56 rounded-lg bg-gradient-to-br from-purple-700 to-blue-400 flex items-center justify-center shadow-2xl flex-shrink-0">
+            <div className="w-48 h-48 lg:w-56 lg:h-56 rounded-lg bg-gradient-to-br from-purple-600 to-pink-500 flex items-center justify-center shadow-2xl flex-shrink-0 glow-teal">
               <Heart size={64} className="text-white" fill="white" />
             </div>
 
             {/* Info */}
             <div className="flex-1">
-              <p className="text-sm font-medium text-[var(--text-secondary)] uppercase tracking-wider">
+              <p className="text-sm font-medium text-slate-500 uppercase tracking-wider">
                 Playlist
               </p>
-              <h1 className="text-4xl lg:text-5xl font-bold mt-2 mb-4">
+              <h1 className="text-4xl lg:text-5xl font-bold mt-2 mb-4 text-moonlight">
                 Liked Songs
               </h1>
-              <p className="text-sm text-[var(--text-secondary)]">
+              <p className="text-sm text-slate-400">
                 {favorites.length} {favorites.length === 1 ? "song" : "songs"}
               </p>
             </div>
@@ -130,10 +124,9 @@ const Favorites = () => {
         <button
           onClick={handlePlayAll}
           disabled={favorites.length === 0}
-          className="w-14 h-14 rounded-full bg-[var(--accent-primary)] flex items-center justify-center 
-                     hover:scale-105 hover:bg-[var(--accent-hover)] transition-all disabled:opacity-50"
+          className="btn-play btn-play-lg glow-teal animate-glow-pulse disabled:opacity-50"
         >
-          <Play size={28} className="text-black ml-1" fill="black" />
+          <Play size={28} className="ml-1" fill="currentColor" />
         </button>
 
         <Button
@@ -153,7 +146,7 @@ const Favorites = () => {
         ) : (
           <div className="mt-4">
             {/* Header */}
-            <div className="grid grid-cols-[16px_4fr_1fr_minmax(80px,1fr)] gap-4 px-4 py-2 text-[var(--text-secondary)] text-sm border-b border-white/10">
+            <div className="grid grid-cols-[16px_4fr_1fr_minmax(80px,1fr)] gap-4 px-4 py-2 text-slate-500 text-sm border-b border-slate-800">
               <span>#</span>
               <span>Title</span>
               <span className="hidden md:block">Album</span>
@@ -196,25 +189,23 @@ const FavoriteRow = ({
 
   return (
     <div
-      className={`group grid grid-cols-[16px_4fr_1fr_minmax(80px,1fr)] gap-4 px-4 py-3 rounded-md 
-                  hover:bg-white/10 transition-colors cursor-pointer
-                  ${isActive ? "bg-white/5" : ""}`}
+      className={`group grid grid-cols-[16px_4fr_1fr_minmax(80px,1fr)] gap-4 px-4 py-3 rounded-lg 
+                  hover:bg-slate-800/50 transition-colors cursor-pointer
+                  ${isActive ? "bg-slate-800/30" : ""}`}
       onClick={onPlay}
     >
       {/* Number / Play button */}
       <div className="flex items-center">
         <span
           className={`group-hover:hidden ${
-            isActive
-              ? "text-[var(--accent-primary)]"
-              : "text-[var(--text-secondary)]"
+            isActive ? "text-teal-400" : "text-slate-500"
           }`}
         >
           {isPlaying ? (
             <div className="w-4 flex items-end justify-center gap-0.5 h-4">
-              <span className="w-1 bg-[var(--accent-primary)] animate-music-bar-1" />
-              <span className="w-1 bg-[var(--accent-primary)] animate-music-bar-2" />
-              <span className="w-1 bg-[var(--accent-primary)] animate-music-bar-3" />
+              <span className="music-bar music-bar-1" />
+              <span className="music-bar music-bar-2" />
+              <span className="music-bar music-bar-3" />
             </div>
           ) : (
             index + 1
@@ -232,7 +223,7 @@ const FavoriteRow = ({
             track.cover_url ||
             `https://ui-avatars.com/api/?name=${encodeURIComponent(
               track.title
-            )}&background=333&color=fff&size=40`
+            )}&background=1e293b&color=2dd4bf&size=40`
           }
           alt={track.title}
           className="w-10 h-10 rounded object-cover"
@@ -240,19 +231,17 @@ const FavoriteRow = ({
         <div className="min-w-0">
           <p
             className={`font-medium truncate ${
-              isActive ? "text-[var(--accent-primary)]" : ""
+              isActive ? "text-teal-400" : "text-slate-100"
             }`}
           >
             {track.title}
           </p>
-          <p className="text-sm text-[var(--text-secondary)] truncate">
-            {track.artist}
-          </p>
+          <p className="text-sm text-slate-400 truncate">{track.artist}</p>
         </div>
       </div>
 
       {/* Album */}
-      <span className="hidden md:flex items-center text-[var(--text-secondary)] text-sm truncate">
+      <span className="hidden md:flex items-center text-slate-500 text-sm truncate">
         {track.album || "-"}
       </span>
 
@@ -263,11 +252,11 @@ const FavoriteRow = ({
             e.stopPropagation();
             onUnlike();
           }}
-          className="p-1 text-[var(--accent-primary)] hover:scale-110 transition-transform"
+          className="p-1 text-teal-400 hover:scale-110 transition-transform"
         >
           <Heart size={18} fill="currentColor" />
         </button>
-        <span className="text-sm text-[var(--text-secondary)]">
+        <span className="text-sm text-slate-500">
           {formatDuration(track.duration)}
         </span>
       </div>

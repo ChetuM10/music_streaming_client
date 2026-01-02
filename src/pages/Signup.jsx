@@ -1,6 +1,15 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Mail, Lock, User, Music2, Eye, EyeOff } from "lucide-react";
+import {
+  Mail,
+  Lock,
+  User,
+  Music2,
+  Eye,
+  EyeOff,
+  Sparkles,
+  Loader2,
+} from "lucide-react";
 import useAuthStore from "../store/authStore";
 import Button from "../components/common/Button";
 import Input from "../components/common/Input";
@@ -73,7 +82,6 @@ const Signup = () => {
 
     if (result.success) {
       setSuccess(true);
-      // If email confirmation is disabled, redirect to login
       setTimeout(() => {
         navigate("/login");
       }, 3000);
@@ -82,50 +90,67 @@ const Signup = () => {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[var(--bg-tertiary)] to-[var(--bg-primary)] flex items-center justify-center px-4">
-        <div className="bg-[var(--bg-secondary)] rounded-2xl p-8 max-w-md text-center shadow-2xl">
-          <div className="w-16 h-16 bg-[var(--accent-primary)] rounded-full flex items-center justify-center mx-auto mb-6">
+      <div className="min-h-screen forest-bg flex items-center justify-center px-4">
+        <div className="glass p-8 max-w-md text-center animate-scale-up">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center mx-auto mb-6 glow-teal">
             <Music2 className="w-8 h-8 text-black" />
           </div>
-          <h1 className="text-2xl font-bold mb-4">Check your email!</h1>
-          <p className="text-[var(--text-secondary)] mb-6">
-            We've sent a confirmation link to <strong>{formData.email}</strong>.
-            Click the link to verify your account.
+          <h1 className="text-2xl font-bold text-slate-100 mb-4">
+            Check your email!
+          </h1>
+          <p className="text-slate-400 mb-6">
+            We've sent a confirmation link to{" "}
+            <strong className="text-slate-200">{formData.email}</strong>. Click
+            the link to verify your account.
           </p>
-          <p className="text-sm text-[var(--text-muted)]">
-            Redirecting to login page...
-          </p>
+          <p className="text-sm text-slate-500">Redirecting to login page...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[var(--bg-tertiary)] to-[var(--bg-primary)] flex flex-col">
+    <div className="min-h-screen forest-bg flex flex-col">
+      {/* Fireflies */}
+      <div
+        className="firefly firefly-gold"
+        style={{ top: "10%", left: "20%", animationDelay: "0s" }}
+      />
+      <div
+        className="firefly firefly-green"
+        style={{ top: "50%", left: "85%", animationDelay: "3s" }}
+      />
+
       {/* Header */}
       <header className="p-8">
-        <Link to="/" className="flex items-center gap-2 w-fit">
-          <div className="w-10 h-10 bg-[var(--accent-primary)] rounded-lg flex items-center justify-center">
+        <Link to="/" className="flex items-center gap-3 w-fit">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center glow-teal-sm">
             <Music2 className="w-6 h-6 text-black" />
           </div>
-          <span className="text-xl font-bold">Melodify</span>
+          <span className="text-xl font-bold text-moonlight">Melodify</span>
         </Link>
       </header>
 
       {/* Main Content */}
       <main className="flex-1 flex items-center justify-center px-4 py-8">
         <div className="w-full max-w-md">
-          <div className="bg-[var(--bg-secondary)] rounded-2xl p-8 shadow-2xl">
-            <h1 className="text-3xl font-bold text-center mb-2">
-              Create Account
-            </h1>
-            <p className="text-[var(--text-secondary)] text-center mb-8">
-              Sign up to start listening
-            </p>
+          <div className="glass p-8 animate-fade-in-up">
+            <div className="text-center mb-8">
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <Sparkles className="w-5 h-5 text-teal-400" />
+                <span className="text-sm text-teal-400 font-medium">
+                  Join the forest
+                </span>
+              </div>
+              <h1 className="text-2xl font-bold text-slate-100">
+                Create Account
+              </h1>
+              <p className="text-slate-400 mt-2">Sign up to start listening</p>
+            </div>
 
             {error && (
-              <div className="bg-red-500/10 border border-red-500/50 rounded-lg px-4 py-3 mb-6">
-                <p className="text-red-400 text-sm">{error}</p>
+              <div className="error-box mb-6">
+                <p className="error-text text-sm">{error}</p>
               </div>
             )}
 
@@ -169,7 +194,7 @@ const Signup = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-[38px] text-[var(--text-muted)] hover:text-white"
+                  className="absolute right-3 top-[38px] text-slate-500 hover:text-slate-300"
                 >
                   {showPassword ? (
                     <EyeOff className="w-5 h-5" />
@@ -202,11 +227,11 @@ const Signup = () => {
             </form>
 
             <div className="mt-8 text-center">
-              <p className="text-[var(--text-secondary)]">
+              <p className="text-slate-400">
                 Already have an account?{" "}
                 <Link
                   to="/login"
-                  className="text-[var(--accent-primary)] hover:underline font-medium"
+                  className="text-teal-400 hover:underline font-medium"
                 >
                   Log in
                 </Link>

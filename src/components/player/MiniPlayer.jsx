@@ -1,201 +1,162 @@
+import { useState, useRef, useEffect } from "react";
 import {
   Play,
   Pause,
   SkipBack,
   SkipForward,
   Repeat,
-  Repeat1,
   Shuffle,
+  Volume2,
+  VolumeX,
   Heart,
+  Maximize2,
+  ListMusic,
 } from "lucide-react";
 import usePlayerStore from "../../store/playerStore";
+import { formatDuration } from "../../lib/utils";
 import ProgressBar from "./ProgressBar";
 import VolumeControl from "./VolumeControl";
 import CoverImage from "../common/CoverImage";
-import { formatDuration } from "../../lib/utils";
 
 const MiniPlayer = () => {
   const {
     currentTrack,
-    currentType,
     isPlaying,
-    currentTime,
+    progress,
     duration,
+    volume,
+    isMuted,
     isShuffled,
     repeatMode,
     togglePlay,
-    next,
-    previous,
+    nextTrack,
+    previousTrack,
     seek,
+    setVolume,
+    toggleMute,
     toggleShuffle,
     toggleRepeat,
   } = usePlayerStore();
 
+  const [showQueue, setShowQueue] = useState(false);
+
   if (!currentTrack) return null;
 
-  const title = currentTrack.title;
-  const subtitle =
-    currentType === "track"
-      ? currentTrack.artist
-      : currentTrack.podcasts?.title || "Podcast";
-
   return (
-    <div
-      className="fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-t from-black via-black/95 to-black/90 backdrop-blur-xl border-t border-white/[0.05]"
-      style={{
-        height: "var(--player-height)",
-        marginBottom: "env(safe-area-inset-bottom)",
-      }}
-    >
-      {/* Progress bar at top */}
-      <ProgressBar
-        currentTime={currentTime}
-        duration={duration}
-        onSeek={seek}
-        className="absolute -top-1 left-0 right-0"
-      />
-
-      <div className="h-full px-4 flex items-center gap-4 max-w-screen-2xl mx-auto">
+    <div className={`player-bar ${isPlaying ? "active" : ""}`}>
+      <div className="max-w-screen-2xl mx-auto flex items-center gap-4">
         {/* Track Info */}
-        <div className="flex items-center gap-4 flex-1 min-w-0 lg:w-1/4 lg:flex-none">
-          <div className="relative group">
+        <div className="flex items-center gap-3 w-1/4 min-w-0">
+          <div className="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 glow-teal-sm">
             <CoverImage
               src={currentTrack.cover_url}
-              title={currentTrack.title}
               alt={currentTrack.title}
-              size="md"
-              rounded="lg"
-              className="shadow-xl"
+              title={currentTrack.title}
+              size="small"
+              className="w-full h-full"
             />
-            {/* Playing animation overlay */}
-            {isPlaying && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-lg">
-                <div className="flex items-end gap-0.5 h-6">
-                  <span className="w-1 bg-[var(--accent-primary)] rounded-full animate-music-bar-1" />
-                  <span className="w-1 bg-[var(--accent-primary)] rounded-full animate-music-bar-2" />
-                  <span className="w-1 bg-[var(--accent-primary)] rounded-full animate-music-bar-3" />
-                </div>
-              </div>
-            )}
           </div>
           <div className="min-w-0">
-            <p className="font-semibold truncate text-sm lg:text-base hover:text-[var(--accent-primary)] transition-colors cursor-pointer">
-              {title}
-            </p>
-            <p className="text-[var(--text-secondary)] text-xs lg:text-sm truncate hover:text-white transition-colors cursor-pointer">
-              {subtitle}
+            <h4 className="font-medium truncate text-slate-100 glow-text">
+              {currentTrack.title}
+            </h4>
+            <p className="text-sm text-slate-400 truncate">
+              {currentTrack.artist}
             </p>
           </div>
-          {/* Like Button */}
-          <button className="hidden lg:flex p-2 text-[var(--text-muted)] hover:text-[var(--accent-primary)] transition-colors">
+          <button className="ml-2 p-2 text-slate-400 hover:text-teal-400 transition-colors">
             <Heart className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Desktop Controls */}
-        <div className="hidden lg:flex flex-col items-center flex-1">
+        {/* Player Controls */}
+        <div className="flex-1 flex flex-col items-center gap-2">
           {/* Control Buttons */}
-          <div className="flex items-center gap-5 mb-2">
+          <div className="flex items-center gap-4">
             <button
               onClick={toggleShuffle}
-              className={`p-2 rounded-full transition-all duration-200 ${
+              className={`p-2 transition-colors ${
                 isShuffled
-                  ? "text-[var(--accent-primary)] bg-[var(--accent-primary)]/10"
-                  : "text-[var(--text-muted)] hover:text-white hover:bg-white/5"
+                  ? "text-teal-400"
+                  : "text-slate-400 hover:text-slate-200"
               }`}
-              title="Shuffle"
             >
-              <Shuffle className="w-4 h-4" />
+              <Shuffle className="w-5 h-5" />
             </button>
-
             <button
-              onClick={previous}
-              className="p-2 text-[var(--text-secondary)] hover:text-white hover:scale-110 transition-all"
-              title="Previous"
+              onClick={previousTrack}
+              className="p-2 text-slate-300 hover:text-white transition-colors"
             >
               <SkipBack className="w-5 h-5" fill="currentColor" />
             </button>
-
             <button
               onClick={togglePlay}
-              className="w-10 h-10 bg-white rounded-full flex items-center justify-center hover:scale-105 transition-all shadow-lg hover:shadow-xl"
-              title={isPlaying ? "Pause" : "Play"}
+              className="btn-play glow-teal animate-glow-pulse"
             >
               {isPlaying ? (
-                <Pause className="w-5 h-5 text-black" fill="black" />
+                <Pause className="w-6 h-6" fill="currentColor" />
               ) : (
-                <Play className="w-5 h-5 text-black ml-0.5" fill="black" />
+                <Play className="w-6 h-6 ml-0.5" fill="currentColor" />
               )}
             </button>
-
             <button
-              onClick={next}
-              className="p-2 text-[var(--text-secondary)] hover:text-white hover:scale-110 transition-all"
-              title="Next"
+              onClick={nextTrack}
+              className="p-2 text-slate-300 hover:text-white transition-colors"
             >
               <SkipForward className="w-5 h-5" fill="currentColor" />
             </button>
-
             <button
               onClick={toggleRepeat}
-              className={`p-2 rounded-full transition-all duration-200 ${
-                repeatMode !== "none"
-                  ? "text-[var(--accent-primary)] bg-[var(--accent-primary)]/10"
-                  : "text-[var(--text-muted)] hover:text-white hover:bg-white/5"
+              className={`p-2 transition-colors ${
+                repeatMode !== "off"
+                  ? "text-teal-400"
+                  : "text-slate-400 hover:text-slate-200"
               }`}
-              title={`Repeat: ${repeatMode}`}
             >
-              {repeatMode === "one" ? (
-                <Repeat1 className="w-4 h-4" />
-              ) : (
-                <Repeat className="w-4 h-4" />
+              <Repeat className="w-5 h-5" />
+              {repeatMode === "one" && (
+                <span className="absolute text-xs font-bold">1</span>
               )}
             </button>
           </div>
 
-          {/* Time Display */}
-          <div className="flex items-center gap-3 text-xs text-[var(--text-muted)]">
-            <span className="w-10 text-right font-medium">
-              {formatDuration(currentTime)}
+          {/* Progress Bar */}
+          <div className="w-full max-w-xl flex items-center gap-3">
+            <span className="text-xs text-slate-400 w-10 text-right">
+              {formatDuration(progress)}
             </span>
-            <div className="w-[400px]">
-              <ProgressBar
-                currentTime={currentTime}
-                duration={duration}
-                onSeek={seek}
-                showThumb
-              />
-            </div>
-            <span className="w-10 font-medium">{formatDuration(duration)}</span>
+            <ProgressBar
+              progress={progress}
+              duration={duration}
+              onSeek={seek}
+            />
+            <span className="text-xs text-slate-400 w-10">
+              {formatDuration(duration)}
+            </span>
           </div>
         </div>
 
-        {/* Mobile Controls */}
-        <div className="flex lg:hidden items-center gap-3">
+        {/* Right Controls */}
+        <div className="w-1/4 flex items-center justify-end gap-3">
           <button
-            onClick={previous}
-            className="p-2 text-[var(--text-secondary)]"
+            onClick={() => setShowQueue(!showQueue)}
+            className={`p-2 transition-colors ${
+              showQueue
+                ? "text-teal-400"
+                : "text-slate-400 hover:text-slate-200"
+            }`}
           >
-            <SkipBack className="w-5 h-5" fill="currentColor" />
+            <ListMusic className="w-5 h-5" />
           </button>
-          <button
-            onClick={togglePlay}
-            className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg"
-          >
-            {isPlaying ? (
-              <Pause className="w-6 h-6 text-black" fill="black" />
-            ) : (
-              <Play className="w-6 h-6 text-black ml-0.5" fill="black" />
-            )}
+          <VolumeControl
+            volume={volume}
+            isMuted={isMuted}
+            onVolumeChange={setVolume}
+            onToggleMute={toggleMute}
+          />
+          <button className="p-2 text-slate-400 hover:text-slate-200 transition-colors">
+            <Maximize2 className="w-5 h-5" />
           </button>
-          <button onClick={next} className="p-2 text-[var(--text-secondary)]">
-            <SkipForward className="w-5 h-5" fill="currentColor" />
-          </button>
-        </div>
-
-        {/* Volume Control (Desktop) */}
-        <div className="hidden lg:flex items-center justify-end gap-4 w-1/4">
-          <VolumeControl />
         </div>
       </div>
     </div>

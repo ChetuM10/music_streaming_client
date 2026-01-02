@@ -76,7 +76,7 @@ const PlaylistDetail = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="p-6 lg:p-8 flex items-center justify-center min-h-[400px]">
         <Loader size="lg" />
       </div>
     );
@@ -84,29 +84,29 @@ const PlaylistDetail = () => {
 
   if (error || !playlist) {
     return (
-      <div className="p-6 lg:p-8">
+      <div className="p-6 lg:p-8 text-center">
         <button
           onClick={() => navigate("/playlists")}
-          className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-white mb-6"
+          className="inline-flex items-center gap-2 text-slate-400 hover:text-white mb-6"
         >
           <ArrowLeft size={20} />
           Back to Playlists
         </button>
-        <p className="text-red-500">{error || "Playlist not found"}</p>
+        <p className="text-slate-400">{error || "Playlist not found"}</p>
       </div>
     );
   }
 
   return (
-    <div className="pb-32">
+    <div className="pb-32 animate-fade-in">
       {/* Header */}
       <div className="relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-purple-900/50 to-[var(--bg-primary)]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-cyan-900/30 to-transparent pointer-events-none" />
 
         <div className="relative p-6 lg:p-8">
           <button
             onClick={() => navigate("/playlists")}
-            className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-white mb-6"
+            className="inline-flex items-center gap-2 text-slate-400 hover:text-white mb-4"
           >
             <ArrowLeft size={20} />
             Back
@@ -114,7 +114,7 @@ const PlaylistDetail = () => {
 
           <div className="flex flex-col md:flex-row gap-6 items-start md:items-end">
             {/* Playlist Cover */}
-            <div className="w-48 h-48 lg:w-56 lg:h-56 rounded-lg overflow-hidden bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center shadow-2xl flex-shrink-0">
+            <div className="w-48 h-48 lg:w-56 lg:h-56 rounded-xl overflow-hidden bg-gradient-to-br from-purple-600 to-cyan-500 flex items-center justify-center shadow-2xl flex-shrink-0 glow-teal">
               {playlist.cover_url ? (
                 <img
                   src={playlist.cover_url}
@@ -128,18 +128,16 @@ const PlaylistDetail = () => {
 
             {/* Playlist Info */}
             <div className="flex-1">
-              <p className="text-sm font-medium text-[var(--text-secondary)] uppercase tracking-wider">
+              <p className="text-sm font-medium text-slate-500 uppercase tracking-wider">
                 Playlist
               </p>
-              <h1 className="text-4xl lg:text-5xl font-bold mt-2 mb-4">
+              <h1 className="text-4xl lg:text-5xl font-bold mt-2 mb-2 text-moonlight">
                 {playlist.name}
               </h1>
               {playlist.description && (
-                <p className="text-[var(--text-secondary)] mb-4">
-                  {playlist.description}
-                </p>
+                <p className="text-slate-400 mb-2">{playlist.description}</p>
               )}
-              <p className="text-sm text-[var(--text-secondary)]">
+              <p className="text-sm text-slate-500">
                 {tracks.length} {tracks.length === 1 ? "song" : "songs"}
               </p>
             </div>
@@ -152,10 +150,9 @@ const PlaylistDetail = () => {
         <button
           onClick={handlePlayAll}
           disabled={tracks.length === 0}
-          className="w-14 h-14 rounded-full bg-[var(--accent-primary)] flex items-center justify-center 
-                     hover:scale-105 hover:bg-[var(--accent-hover)] transition-all disabled:opacity-50"
+          className="btn-play btn-play-lg glow-teal disabled:opacity-50"
         >
-          <Play size={28} className="text-black ml-1" fill="black" />
+          <Play size={28} className="ml-1" fill="currentColor" />
         </button>
 
         <Button
@@ -178,7 +175,7 @@ const PlaylistDetail = () => {
         ) : (
           <div className="mt-4">
             {/* Header */}
-            <div className="grid grid-cols-[16px_4fr_1fr_minmax(80px,1fr)] gap-4 px-4 py-2 text-[var(--text-secondary)] text-sm border-b border-white/10">
+            <div className="grid grid-cols-[16px_4fr_2fr_minmax(80px,1fr)] gap-4 px-4 py-2 text-slate-500 text-sm border-b border-slate-800">
               <span>#</span>
               <span>Title</span>
               <span className="hidden md:block">Album</span>
@@ -214,25 +211,23 @@ const TrackRow = ({ track, index, isPlaying, isActive, onPlay, onRemove }) => {
 
   return (
     <div
-      className={`group grid grid-cols-[16px_4fr_1fr_minmax(80px,1fr)] gap-4 px-4 py-3 rounded-md 
-                  hover:bg-white/10 transition-colors cursor-pointer
-                  ${isActive ? "bg-white/5" : ""}`}
+      className={`group grid grid-cols-[16px_4fr_2fr_minmax(80px,1fr)] gap-4 px-4 py-3 rounded-lg 
+                  hover:bg-slate-800/50 transition-colors cursor-pointer
+                  ${isActive ? "bg-slate-800/30" : ""}`}
       onClick={onPlay}
     >
       {/* Number / Play button */}
       <div className="flex items-center">
         <span
           className={`group-hover:hidden ${
-            isActive
-              ? "text-[var(--accent-primary)]"
-              : "text-[var(--text-secondary)]"
+            isActive ? "text-teal-400" : "text-slate-500"
           }`}
         >
           {isPlaying ? (
             <div className="w-4 flex items-end justify-center gap-0.5 h-4">
-              <span className="w-1 bg-[var(--accent-primary)] animate-music-bar-1" />
-              <span className="w-1 bg-[var(--accent-primary)] animate-music-bar-2" />
-              <span className="w-1 bg-[var(--accent-primary)] animate-music-bar-3" />
+              <span className="music-bar music-bar-1" />
+              <span className="music-bar music-bar-2" />
+              <span className="music-bar music-bar-3" />
             </div>
           ) : (
             index + 1
@@ -250,7 +245,7 @@ const TrackRow = ({ track, index, isPlaying, isActive, onPlay, onRemove }) => {
             track.cover_url ||
             `https://ui-avatars.com/api/?name=${encodeURIComponent(
               track.title
-            )}&background=333&color=fff&size=40`
+            )}&background=1e293b&color=2dd4bf&size=40`
           }
           alt={track.title}
           className="w-10 h-10 rounded object-cover"
@@ -258,25 +253,23 @@ const TrackRow = ({ track, index, isPlaying, isActive, onPlay, onRemove }) => {
         <div className="min-w-0">
           <p
             className={`font-medium truncate ${
-              isActive ? "text-[var(--accent-primary)]" : ""
+              isActive ? "text-teal-400" : "text-slate-100"
             }`}
           >
             {track.title}
           </p>
-          <p className="text-sm text-[var(--text-secondary)] truncate">
-            {track.artist}
-          </p>
+          <p className="text-sm text-slate-400 truncate">{track.artist}</p>
         </div>
       </div>
 
       {/* Album */}
-      <span className="hidden md:flex items-center text-[var(--text-secondary)] text-sm truncate">
+      <span className="hidden md:flex items-center text-slate-500 text-sm truncate">
         {track.album || "-"}
       </span>
 
       {/* Duration & Actions */}
-      <div className="flex items-center justify-end gap-4">
-        <span className="text-sm text-[var(--text-secondary)]">
+      <div className="flex items-center justify-end gap-2">
+        <span className="text-sm text-slate-500 mr-2">
           {formatDuration(track.duration)}
         </span>
 
@@ -286,20 +279,20 @@ const TrackRow = ({ track, index, isPlaying, isActive, onPlay, onRemove }) => {
               e.stopPropagation();
               setShowMenu(!showMenu);
             }}
-            className="p-1 opacity-0 group-hover:opacity-100 hover:bg-white/10 rounded transition-all"
+            className="p-1 text-slate-500 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity"
           >
             <MoreHorizontal size={18} />
           </button>
 
           {showMenu && (
-            <div className="absolute right-0 top-8 bg-[var(--bg-elevated)] rounded-lg shadow-xl py-2 min-w-[150px] z-10">
+            <div className="absolute right-0 top-full mt-1 glass p-2 rounded-lg min-w-[150px] z-10 animate-fade-in">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   onRemove();
                   setShowMenu(false);
                 }}
-                className="flex items-center gap-2 px-4 py-2 w-full text-left text-red-500 hover:bg-white/10"
+                className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 rounded transition-colors"
               >
                 <Trash2 size={16} />
                 Remove
