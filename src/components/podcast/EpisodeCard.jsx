@@ -11,12 +11,21 @@ const EpisodeCard = ({ episode, podcast }) => {
     if (isCurrentEpisode) {
       togglePlay();
     } else {
+      // Handle both camelCase (external API) and snake_case (internal API)
+      const audioUrl = episode.audioUrl || episode.audio_url;
+      const coverUrl = podcast?.cover_url || episode.image || episode.cover_url;
+
+      if (!audioUrl) {
+        console.error("No audio URL found for episode:", episode);
+        return;
+      }
+
       playTrack({
         id: episode.id,
         title: episode.title,
-        artist: podcast?.host || "Podcast",
-        cover_url: podcast?.cover_url || episode.cover_url,
-        audio_url: episode.audio_url,
+        artist: podcast?.host || podcast?.title || "Podcast",
+        cover_url: coverUrl,
+        audio_url: audioUrl,
         duration: episode.duration,
       });
     }
